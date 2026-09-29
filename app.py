@@ -2,96 +2,78 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. Configuración de la página
+# Configuración inicial de la página
 st.set_page_config(
-    page_title="Déficit Habitacional - Censo",
+    page_title="Déficit Habitacional - Corrientes Capital",
     page_icon="🏠",
     layout="wide"
 )
 
-# Título y Subtítulo principal
-st.title("📊 Análisis e Indicadores del Déficit Habitacional")
-st.markdown("""
-**Equipo 4:** Maria Itali Lopez Fernandez y Raquel Elizabeth Fernandez  
-**Tema:** Cuantificación del Déficit Habitacional con Datos Censales  
----
-""")
-
-# 2. Carga de datos (con caché para mejorar rendimiento)
+# Carga de datos oficiales
 @st.cache_data
-def cargar_datos():
-    # Reemplaza 'tus_datos_censo.csv' por la ruta o URL directa de tu archivo CSV/Excel
-    df = pd.read_csv('tus_datos_censo.csv')
-    return df
+def cargar_datos_censo():
+    return pd.read_excel('Ciudad_Corrientes_Capital_Deficit_Habitacional_2022.xlsx')
 
-try:
-    df = cargar_datos()
-except Exception as e:
-    st.info("💡 Sube tu archivo de datos para previsualizar el dashboard dinámico.")
-    # Datos de prueba para que la aplicación muestre estructura visual de inmediato
-    df = pd.DataFrame({
-        'Jurisdiccion': ['Zona Norte', 'Zona Sur', 'Zona Este', 'Zona Oeste', 'Centro'],
-        'Hogares_Totales': [12000, 15000, 9800, 11200, 18000],
-        'Deficit_Cuantitativo': [1500, 2300, 800, 1100, 950],
-        'Deficit_Cualitativo': [3200, 4100, 2100, 2900, 1800]
+# Barra lateral
+st.sidebar.title("🛠️ Configuración")
+archivo_subido = st.sidebar.file_uploader("Subí un archivo (Excel/CSV):", type=["xlsx", "csv"])
+
+if archivo_subido is not None:
+    try:
+        df = pd.read_csv(archivo_subido) if archivo_subido.name.endswith('.csv') else pd.read_excel(archivo_subido)
+        st.sidebar.success("¡Archivo cargado correctamente!")
+    except Exception as e:
+        st.sidebar.error(f"Error: {e}")
+        df = cargar_datos_censo()
+else:
+    df = cargar_datos_censo()
+
+# Encabezado
+st.title("🏠 Déficit Habitacional en Corrientes Capital")
+st.subheader("Datos oficiales del Censo 2022 (INDEC)")
+
+st.markdown("> **Nota metodológica:** El Déficit Cualitativo ($DC$) se expresa como un rango estimado entre la carencia más extendida y la suma de sus componentes sin solapamiento.")
+
+st.divider()
+
+# Tarjetas KPI
+fila = df.iloc[0]
+c1, c2, c3, c4 = st.columns(4)
+
+with c1:
+    st.metric("Hogares Totales", f"{int(fila['Total_Hogares']):,}".replace(",", "."))
+with c2:
+    st.metric("Déficit Cuantitativo (DQ)", f"{int(fila['DQ_Total']):,}".replace(",", "."), delta=f"{fila['DQ_Porcentaje']}%", delta_color="inverse")
+with c3:
+    st.metric("Déficit Cualitativo (DC)", f"{int(fila['DC_Cota_Inferior']):,} a {int(fila['DC_Cota_Superior']):,}".replace(",", "."))
+with c4:
+    st.metric("Déficit Total (DHT)", f"{fila['DHT_Porcentaje_Min']}% a {fila['DHT_Porcentaje_Max']}%", delta="1 de cada 5 hogares", delta_color="inverse")
+
+st.divider()
+
+# Gráficos
+col_g1, col_g2 = st.columns(2)
+
+with col_g1:
+    st.subheader("Composición del Déficit Cuantitativo ($DQ$)")
+    df_dq = pd.DataFrame({
+        'Componente': ['Irrecuperables\n(Ranchos/Casillas)', 'Allegados\n(Convivencia)'],
+        'Hogares': [fila['DQ_Irrecuperable'], fila['DQ_Allegamiento']]
     })
+    fig_dq = px.bar(df_dq, x='Componente', y='Hogares', text='Hogares', color='Componente', color_discrete_sequence=['#1F77B4', '#FF7F0E'])
+    fig_dq.update_traces(texttemplate='%{text:,}', textposition='outside')
+    fig_dq.update_layout(showlegend=False, height=400)
+    st.plotly_chart(fig_dq, use_container_width=True)
 
-# 3. Barra lateral (Filtros interactivos)
-st.sidebar.header("🔍 Filtros de Búsqueda")
-jurisdicciones = df['Jurisdiccion'].unique()
-seleccion_jurisdiccion = st.sidebar.multiselect(
-    "Seleccionar Región / Jurisdicción:",
-    options=jurisdicciones,
-    default=jurisdicciones
-)
+with col_g2:
+    st.subheader("Dimensiones de Carencia")
+    dims = ['Tenencia Insegura', 'Hacinamiento', 'Saneamiento Inadecuado', 'Agua Inadecuada', 'Piso Precario']
+    vals = [fila['DC_Tenencia_Insegura'], fila['DC_Hacinamiento'], fila['DC_Saneamiento_Inadecuado'], fila['DC_Agua_Inadecuada'], fila['DC_Piso_Precario']]
+    df_dims = pd.DataFrame({'Dimensión': dims, 'Hogares': vals}).sort_values('Hogares', ascending=True)
+    fig_dims = px.bar(df_dims, x='Hogares', y='Dimensión', orientation='h', text='Hogares', color_discrete_sequence=['#1F77B4'])
+    fig_dims.update_traces(texttemplate='%{text:,}', textposition='auto')
+    fig_dims.update_layout(height=400)
+    st.plotly_chart(fig_dims, use_container_width=True)
 
-# Filtrar DataFrame según selección
-df_filtrado = df[df['Jurisdiccion'].isin(seleccion_jurisdiccion)]
-
-# 4. Métricas clave (Tarjetas KPI)
-st.subheader("📌 Indicadores Clave de Vivienda")
-
-col1, col2, col3 = st.columns(3)
-
-total_hogares = df_filtrado['Hogares_Totales'].sum()
-total_cuantitativo = df_filtrado['Deficit_Cuantitativo'].sum()
-total_cualitativo = df_filtrado['Deficit_Cualitativo'].sum()
-
-col1.metric("Hogares Analizados", f"{total_hogares:,}")
-col2.metric("Déficit Cuantitativo (Viviendas Nuevas)", f"{total_cuantitativo:,}", delta_color="inverse")
-col3.metric("Déficit Cualitativo (Mejoras/Hacinamiento)", f"{total_cualitativo:,}", delta_color="inverse")
-
-st.markdown("---")
-
-# 5. Gráficos interactivos con Plotly
-st.subheader("📈 Diagnóstico del Déficit por Región")
-
-col_graf1, col_graf2 = st.columns(2)
-
-with col_graf1:
-    st.markdown("### Déficit Cuantitativo vs Cualitativo")
-    fig_barras = px.bar(
-        df_filtrado, 
-        x='Jurisdiccion', 
-        y=['Deficit_Cuantitativo', 'Deficit_Cualitativo'],
-        barmode='group',
-        labels={'value': 'Cantidad de Hogares', 'variable': 'Tipo de Déficit'},
-        color_discrete_sequence=['#EF553B', '#FFA15A']
-    )
-    st.plotly_chart(fig_barras, use_container_width=True)
-
-with col_graf2:
-    st.markdown("### Proporción del Déficit Total")
-    df_filtrado['Deficit_Total'] = df_filtrado['Deficit_Cuantitativo'] + df_filtrado['Deficit_Cualitativo']
-    fig_pie = px.pie(
-        df_filtrado, 
-        names='Jurisdiccion', 
-        values='Deficit_Total',
-        hole=0.4,
-        color_discrete_sequence=px.colors.qualitative.Pastel
-    )
-    st.plotly_chart(fig_pie, use_container_width=True)
-
-# 6. Tabla de datos detallada
-with st.expander("📋 Ver Tabla de Datos Filtrada"):
-    st.dataframe(df_filtrado, use_container_width=True)
+with st.expander("📊 Ver datos consolidados"):
+    st.dataframe(df, use_container_width=True)
