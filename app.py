@@ -5,7 +5,7 @@ import plotly.express as px
 import streamlit as st
 
 # ---------- Configuración ----------
-ARCHIVO = Path("Ciudad_Corrientes_Capital_Deficit_Habitacional_2022 (4).xlsx")  # confirmen el nombre real
+ARCHIVO = Path("Ciudad_Corrientes_Capital_Deficit_Habitacional_2022 (4).xlsx")
 FECHA_DESCARGA = "07/11/2026"
 CUADROS = "Cuadros 1.7, 2.7, 3.7, 5.7 y 6.7 de hogares (Corrientes, Capital); cuadros de viviendas 2.7 y 3.7"
 
@@ -14,6 +14,8 @@ COLUMNAS = [
     "DC_Piso_Precario", "DC_Agua_Inadecuada", "DC_Saneamiento_Inadecuado",
     "DC_Tenencia_Insegura", "DC_Hacinamiento",
 ]
+
+PALETA = ["#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"]
 
 st.set_page_config(page_title="Déficit habitacional - Corrientes Capital", layout="wide")
 
@@ -27,6 +29,21 @@ def fmt(n, dec=0):
 @st.cache_data
 def cargar(ruta):
     return pd.read_excel(ruta)
+
+
+def barras(datos, x, y, horizontal=False, paleta=PALETA):
+    datos = datos.copy()
+    datos["Etiqueta"] = datos["Hogares"].apply(fmt)
+    categoria = y if horizontal else x
+    fig = px.bar(
+        datos, x=x, y=y, text="Etiqueta",
+        orientation="h" if horizontal else "v",
+        color=categoria,
+        color_discrete_sequence=paleta,
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(height=380, showlegend=False, separators=",.")
+    return fig
 
 
 # ---------- Carga: si falta algo, se detiene con error visible ----------
@@ -88,27 +105,7 @@ st.caption("Equivale a aproximadamente 1 de cada 5 hogares.")
 
 st.divider()
 
-
 # ---------- Gráficos ----------
-PALETA = ["#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"]
-
-
-def barras(datos, x, y, horizontal=False, paleta=PALETA):
-    datos = datos.copy()
-    datos["Etiqueta"] = datos["Hogares"].apply(fmt)
-    categoria = y if horizontal else x
-    fig = px.bar(
-        datos, x=x, y=y, text="Etiqueta",
-        orientation="h" if horizontal else "v",
-        color=categoria,
-        color_discrete_sequence=paleta,
-    )
-    fig.update_traces(textposition="outside")
-    fig.update_layout(height=380, showlegend=False, separators=",.")
-    return fig
-st.plotly_chart(barras(d_comp, "Hogares", "Dimensión", horizontal=True, color="#7F7F7F"), use_container_width=True)
-
-
 g1, g2 = st.columns(2)
 
 with g1:
@@ -129,7 +126,10 @@ d_comp = pd.DataFrame({
     "Dimensión": ["Tenencia insegura", "Hacinamiento"],
     "Hogares": [tenencia, hacin],
 }).sort_values("Hogares")
-st.plotly_chart(barras(d_comp, "Hogares", "Dimensión", horizontal=True, color="#7F7F7F"), use_container_width=True)
+st.plotly_chart(
+    barras(d_comp, "Hogares", "Dimensión", horizontal=True, paleta=["#9467BD", "#17BECF"]),
+    use_container_width=True,
+)
 
 st.divider()
 
@@ -140,7 +140,8 @@ st.markdown(f"""
 - **Déficit cualitativo** = rango. El mínimo es la carencia más extendida entre piso, agua y saneamiento ({fmt(dc_min)}). El máximo es la suma de las tres ({fmt(dc_max)}).
 - **Déficit total** = cuantitativo + cualitativo, expresado como rango: {fmt(dht_pct_min, 1)}% a {fmt(dht_pct_max, 1)}% de los hogares.
 - **Tenencia insegura y hacinamiento** se muestran aparte como dimensiones complementarias. No se incluyen en el déficit.
-- **Cuadros y filas de origen de cada número:** Total de hogares: Cuadro 2.7, solapa 2.7.3 (Capital), fila Total. Agua inadecuada: total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total)..
+- **Total de hogares:** Cuadro 2.7, solapa Cuadro 2.7.3 (Capital), fila Total, columna Total de hogares.
+- **Agua inadecuada:** total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total).
 - Fuente: Censo 2022 (INDEC). Descarga: {FECHA_DESCARGA}.
 """)
 
