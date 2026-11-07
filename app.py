@@ -90,6 +90,22 @@ st.divider()
 
 
 # ---------- Gráficos ----------
+PALETA = ["#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD"]
+
+
+def barras(datos, x, y, horizontal=False, paleta=PALETA):
+    datos = datos.copy()
+    datos["Etiqueta"] = datos["Hogares"].apply(fmt)
+    categoria = y if horizontal else x
+    fig = px.bar(
+        datos, x=x, y=y, text="Etiqueta",
+        orientation="h" if horizontal else "v",
+        color=categoria,
+        color_discrete_sequence=paleta,
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(height=380, showlegend=False, separators=",.")
+    return fig
 st.plotly_chart(barras(d_comp, "Hogares", "Dimensión", horizontal=True, color="#7F7F7F"), use_container_width=True)
 
 
