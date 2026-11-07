@@ -6,8 +6,8 @@ import streamlit as st
 
 # ---------- Configuración ----------
 ARCHIVO = Path("Ciudad_Corrientes_Capital_Deficit_Habitacional_2022.xlsx")  # confirmen el nombre real
-FECHA_DESCARGA = "COMPLETAR (dd/mm/aaaa)"
-CUADROS = "COMPLETAR (nombres de los cuadros del INDEC)"
+FECHA_DESCARGA = "FECHA_DESCARGA = "07/11/2026""
+CUADROS = "Cuadros 1.7, 2.7, 3.7, 5.7 y 6.7 de hogares (Corrientes, Capital); cuadros de viviendas 2.7 y 3.7"
 
 COLUMNAS = [
     "Total_Hogares", "DQ_Irrecuperable", "DQ_Allegamiento",
@@ -134,7 +134,7 @@ st.markdown(f"""
 - **Déficit cualitativo** = rango. El mínimo es la carencia más extendida entre piso, agua y saneamiento ({fmt(dc_min)}). El máximo es la suma de las tres ({fmt(dc_max)}).
 - **Déficit total** = cuantitativo + cualitativo, expresado como rango: {fmt(dht_pct_min, 1)}% a {fmt(dht_pct_max, 1)}% de los hogares.
 - **Tenencia insegura y hacinamiento** se muestran aparte como dimensiones complementarias. No se incluyen en el déficit.
-- **Cuadros y filas de origen de cada número:** COMPLETAR (ejemplo: Cuadro X, fila Y → irrecuperables).
+- **Cuadros y filas de origen de cada número:** Total de hogares: Cuadro 2.7, solapa 2.7.3 (Capital), fila Total. Agua inadecuada: total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total)..
 - Fuente: Censo 2022 (INDEC). Descarga: {FECHA_DESCARGA}.
 """)
 
