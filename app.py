@@ -5,7 +5,7 @@ import plotly.express as px
 import streamlit as st
 
 # ---------- Configuración ----------
-ARCHIVO = Path("Ciudad_Corrientes_Capital_Deficit_Habitacional_2022.xlsx")  # confirmen el nombre real
+ARCHIVO = Path("Ciudad_Corrientes_Capital_Deficit_Habitacional_2022 (4).xlsx")  # confirmen el nombre real
 FECHA_DESCARGA = "07/11/2026"
 CUADROS = "Cuadros 1.7, 2.7, 3.7, 5.7 y 6.7 de hogares (Corrientes, Capital); cuadros de viviendas 2.7 y 3.7"
 
