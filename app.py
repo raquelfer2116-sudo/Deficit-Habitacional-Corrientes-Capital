@@ -143,6 +143,7 @@ st.markdown(f"""
 - **Total de hogares:** Cuadro 2.7, solapa Cuadro 2.7.3 (Capital), fila Total, columna Total de hogares.
 - **Agua inadecuada:** total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total).
 - **Saneamiento inadecuado:** hogares cuyo baño desagua solo a pozo ciego, a hoyo o excavación, o que no tienen baño: 14.393 + 925 + 1.730 = 17.048 (Cuadro 3.7, solapa 3.7.3, filas "Solo a pozo ciego", "A hoyo, excavación en la tierra, etc." y "No tiene"). Se considera adecuado el desagüe a red pública y a cámara séptica.
+- **Piso precario:** hogares con piso de tierra o ladrillo suelto = 2.682 (Cuadro 1.7, solapa 1.7.3, fila "Total", columna "Tierra o ladrillo suelto").
 - Fuente: Censo 2022 (INDEC). Descarga: {FECHA_DESCARGA}.
 """)
 
