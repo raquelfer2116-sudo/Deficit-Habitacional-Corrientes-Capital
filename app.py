@@ -123,7 +123,7 @@ with g2:
 
 st.subheader("Dimensiones complementarias (no suman al déficit)")
 d_comp = pd.DataFrame({
-    "Dimensión": ["Tenencia insegura", "Hogares de una sola habitación"],
+    "Dimensión": ["Tenencia insegura", "Hacinamiento"],
     "Hogares": [tenencia, hacin],
 }).sort_values("Hogares")
 st.plotly_chart(
@@ -139,17 +139,9 @@ st.markdown(f"""
 - **Déficit cuantitativo** = viviendas irrecuperables + hogares allegados ({fmt(irrec)} + {fmt(alleg)} = {fmt(dq)}).
 - **Déficit cualitativo** = rango. El mínimo es la carencia más extendida entre piso, agua y saneamiento ({fmt(dc_min)}). El máximo es la suma de las tres ({fmt(dc_max)}).
 - **Déficit total** = cuantitativo + cualitativo, expresado como rango: {fmt(dht_pct_min, 1)}% a {fmt(dht_pct_max, 1)}% de los hogares.
-- **Tenencia insegura y hogares de una sola habitación** se muestran aparte como dimensiones complementarias. No se incluyen en el déficit.
+- **Tenencia insegura y hacinamiento** se muestran aparte como dimensiones complementarias. No se incluyen en el déficit.
 - **Total de hogares:** Cuadro 2.7, solapa Cuadro 2.7.3 (Capital), fila Total, columna Total de hogares.
 - **Agua inadecuada:** total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total).
-- **Saneamiento inadecuado:** hogares cuyo baño desagua solo a pozo ciego, a hoyo o excavación, o que no tienen baño: 14.393 + 925 + 1.730 = 17.048 (Cuadro 3.7, solapa 3.7.3, filas "Solo a pozo ciego", "A hoyo, excavación en la tierra, etc." y "No tiene"). Se considera adecuado el desagüe a red pública y a cámara séptica.
-- **Piso precario:** hogares con piso de tierra o ladrillo suelto = 2.682 (Cuadro 1.7, solapa 1.7.3, fila "Total", columna "Tierra o ladrillo suelto").
-- **Allegamiento:** hogares que comparten la vivienda con otro hogar = hogares − viviendas particulares ocupadas = 137.451 − 134.123 = 3.328 (Cuadro 2.7 de viviendas, hoja única, fila "Capital", columnas "Total": "Hogares" y "Viviendas particulares ocupadas").
-- **Viviendas irrecuperables:** hogares que viven en rancho, casilla, local no construido para habitación o vivienda móvil: 1.116 + 1.947 + 427 + 150 = 3.640 (Cuadro 3.7 de viviendas, hoja única, fila "Capital", bloque "Total de hogares"). No se cuentan las casas, los departamentos ni las piezas en inquilinato, hotel familiar o pensión.
-- **Tenencia insegura:** hogares con vivienda propia sin documentación, prestada u otra situación: 11.254 + 6.580 + 11.107 = 28.941 (Cuadro 6.7, hoja única,
-fila "Capital", columnas "Propia - No tiene documentación", "Prestada" y "Otra situación"). No se cuentan como inseguras la propiedad con escritura, boleto u otra
-documentación, la vivienda alquilada ni la cedida por trabajo.
-- **Hogares de una sola habitación:** 19.617 hogares con una habitación (Cuadro 5.7, solapa 5.7.3, fila "1" de habitaciones, columna "Total de hogares"). Es una aproximación: el cuadro no informa cuántas personas viven en cada hogar, por lo que no mide hacinamiento (personas por cuarto).
 - Fuente: Censo 2022 (INDEC). Descarga: {FECHA_DESCARGA}.
 """)
 
