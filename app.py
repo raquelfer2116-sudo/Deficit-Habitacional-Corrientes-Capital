@@ -144,6 +144,7 @@ st.markdown(f"""
 - **Agua inadecuada:** total de hogares menos los hogares con agua por cañería dentro de la vivienda (Cuadro 2.7, solapa 2.7.3, fila Total).
 - **Saneamiento inadecuado:** hogares cuyo baño desagua solo a pozo ciego, a hoyo o excavación, o que no tienen baño: 14.393 + 925 + 1.730 = 17.048 (Cuadro 3.7, solapa 3.7.3, filas "Solo a pozo ciego", "A hoyo, excavación en la tierra, etc." y "No tiene"). Se considera adecuado el desagüe a red pública y a cámara séptica.
 - **Piso precario:** hogares con piso de tierra o ladrillo suelto = 2.682 (Cuadro 1.7, solapa 1.7.3, fila "Total", columna "Tierra o ladrillo suelto").
+- **Allegamiento:** hogares que comparten la vivienda con otro hogar = hogares − viviendas particulares ocupadas = 137.451 − 134.123 = 3.328 (Cuadro 2.7 de viviendas, hoja única, fila "Capital", columnas "Total": "Hogares" y "Viviendas particulares ocupadas").
 - **Tenencia insegura:** hogares con vivienda propia sin documentación, prestada u otra situación: 11.254 + 6.580 + 11.107 = 28.941 (Cuadro 6.7, hoja única,
 fila "Capital", columnas "Propia - No tiene documentación", "Prestada" y "Otra situación"). No se cuentan como inseguras la propiedad con escritura, boleto u otra
 documentación, la vivienda alquilada ni la cedida por trabajo.
